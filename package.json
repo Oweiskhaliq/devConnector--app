@@ -1,0 +1,33 @@
+{
+  "name": "devconnector",
+  "version": "1.0.0",
+  "description": "This is soical media app to connect devolper.",
+  "main": "sever.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oweiskhaliq/devConnector--app.git"
+  },
+  "author": "oweis khaliq",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Oweiskhaliq/devConnector--app/issues"
+  },
+  "homepage": "https://github.com/Oweiskhaliq/devConnector--app#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.3",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
