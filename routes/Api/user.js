@@ -101,5 +101,15 @@ userRouter.post("/login", (req, res) => {
 // @route  Post /api/user/current
 // @desc  returning the current user
 // @access private
-
+userRouter.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }), // Authenticate with JWT
+  (req, res) => {
+    return res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email,
+    }); // Send success response with user data
+  }
+);
 export default userRouter;
