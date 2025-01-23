@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import passport from "passport";
 // load register validation
 import validateRegisterInput from "../../validation/register.js";
+// load Login validation
+import validateLoginInput from "../../validation/login.js";
 
 const userRouter = Router();
 
@@ -15,7 +17,6 @@ const userRouter = Router();
 
 userRouter.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
-  console.log("isValid", isValid);
   if (!isValid) {
     return res.status(400).json(errors);
   }
@@ -61,13 +62,18 @@ userRouter.post("/register", (req, res) => {
 // @desc  user login / Returing Token
 // @access public
 userRouter.post("/login", (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
   //destructing the field
   const { email, password } = req.body;
 
   // check for user
   userModel.findOne({ email }).then((user) => {
     if (!user) {
-      res.status(404).json({ email: "User not found." });
+      errors.email = "User not found.";
+      res.status(404).json({ errors });
     }
 
     //check for password
@@ -89,7 +95,8 @@ userRouter.post("/login", (req, res) => {
           }
         );
       } else {
-        return res.status(404).json({ password: "Password is Incurrect" });
+        errors.password = "Password is Incurrect";
+        return res.status(404).json({ errors });
       }
     });
   });
