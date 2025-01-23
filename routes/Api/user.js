@@ -9,10 +9,6 @@ import validateRegisterInput from "../../validation/register.js";
 
 const userRouter = Router();
 
-// @route  Get /api/user/test
-// @desc  to test the route
-// @access public
-
 // @route  Get /api/user/register
 // @desc  create a register route
 // @access public
@@ -30,7 +26,8 @@ userRouter.post("/register", (req, res) => {
 
   userModel.findOne({ email: email }).then((user) => {
     if (user) {
-      return res.status(400).json({ email: "Email already exist" });
+      errors.email = "Email already exist";
+      return res.status(400).json({ errors });
     } else {
       const avatar = gravatar.url(email, {
         s: "200", //size
