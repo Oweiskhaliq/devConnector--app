@@ -14,10 +14,12 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//meddlewares
-app.get("/", (req, res) => {
-  res.send("hello");
-});
+//passpost meddlewares
+app.use(passport.initialize());
+
+//passport config
+import passportConfig from "./config/passport.js";
+passportConfig(passport);
 
 app.use("/api/posts", postRouter);
 app.use("/api/user", userRouter);
@@ -26,7 +28,7 @@ app.use("/api/profile", profileRouter);
 const PORT = process.env.PORT || 5000;
 
 ConnectDB().then(() => {
-app.listen(PORT, () => {
-  console.log("Server is listening on PORT: ", PORT);
+  app.listen(PORT, () => {
+    console.log("Server is listening on PORT: ", PORT);
   });
 });
