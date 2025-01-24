@@ -8,12 +8,11 @@ const validateProfileInput = (data) => {
   data.status = !isEmptyLocal(data.status) ? data.status : "";
   data.skills = !isEmptyLocal(data.skills) ? data.skills : "";
 
-  if (validator.isEmpty(data.handle)) {
-    errors.handle = "handle field is required.";
-  }
-
   if (!validator.isLength(data.handle, { min: 2, max: 40 })) {
     errors.handle = "hanlde will be between 2 to 40 characters";
+  }
+  if (validator.isEmpty(data.handle)) {
+    errors.handle = "handle field is required.";
   }
 
   if (validator.isEmpty(data.status)) {

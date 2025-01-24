@@ -24,6 +24,7 @@ profileRouter.get(
     const errors = {};
     profileModel
       .findOne({ user: req.user.id })
+      .populate("user", ["name", "avatar"]) //include data from user collection
       .then((profile) => {
         if (!profile) {
           errors.noprofile = "There is no profile for this user.";
@@ -69,7 +70,7 @@ profileRouter.post(
     profileFields.social = {};
     if (req.body.youtube) profileFields.social.youtube = req.body.youtube;
     if (req.body.facebook) profileFields.social.facebook = req.body.facebook;
-    if (req.body.linkedin) profileFields.social.ylinkedin = req.body.ylinkedin;
+    if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
     if (req.body.instagram) profileFields.social.instagram = req.body.instagram;
 
     profileModel.findOne({ user: req.user.id }).then((profile) => {
