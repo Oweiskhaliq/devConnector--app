@@ -208,6 +208,35 @@ profileRouter.post(
   }
 );
 
+// @route  POST /api/profile/experience/delete/:exp_id
+// @desc POST add  experience
+// @access praivate
+profileRouter.delete(
+  "/experience/delete/:exp_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //finding user
+    profileModel.findOne({ user: req.user.id }).then((profile) => {
+      if (!profile) {
+        res.status(404).json({ noproifle: "No profile found" });
+        return;
+      }
+      // Finding the experience to delete
+      const expIndex = profile.experience.findIndex(
+        (exp) => exp._id.toString() === req.params.exp_id
+      );
+
+      if (expIndex === -1) {
+        return res.status(400).json({ noexperience: "no experience Found" });
+      }
+      // Removing the experience from the array
+      profile.experience.splice(expIndex, 1);
+      // Saving the profile
+      profile.save().then(() => res.json(profile));
+    });
+  }
+);
+
 // @route  POST /api/profile/education
 // @desc POST add  education
 // @access praivate
