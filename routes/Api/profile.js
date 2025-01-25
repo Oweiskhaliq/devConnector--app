@@ -5,6 +5,7 @@ const profileRouter = Router();
 
 // load profile validation
 import validateProfileInput from "../../validation/profile.js";
+import validateExperienceInput from "../../validation/experience.js";
 
 // @route  Get /api/profile/test
 // @desc  to test the route
@@ -162,6 +163,47 @@ profileRouter.post(
           });
       }
     });
+  }
+);
+
+// @route  POST /api/profile/experience
+// @desc POST add  experience
+// @access praivate
+profileRouter.post(
+  "/experience",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateExperienceInput(req.body);
+    //check for error
+    if (!isValid) {
+      //send response
+      res.status(404).json(errors);
+    }
+    const experienceFields = {};
+
+    if (req.body.title) experienceFields.title = req.body.title;
+    if (req.body.company) experienceFields.company = req.body.company;
+    if (req.body.location) experienceFields.location = req.body.location;
+    if (req.body.from) experienceFields.from = req.body.from;
+    if (req.body.to) experienceFields.to = req.body.to;
+    if (req.body.current) experienceFields.current = req.body.current;
+    if (req.body.description)
+      experienceFields.description = req.body.description;
+
+    //finding user
+    profileModel
+      .findOne({ user: req.user.id })
+      .then((profile) => {
+        if (!profile) {
+          res.status(404).json({ noprofile: "no profile found for this user" });
+          return; // Make sure to return to avoid further code execution
+        }
+        profile.experience.push(experienceFields);
+        profile.save().then(() => {
+          res.json(profile);
+        });
+      })
+      .catch((err) => res.status(404).json(err));
   }
 );
 
