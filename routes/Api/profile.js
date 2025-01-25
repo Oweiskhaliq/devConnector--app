@@ -6,6 +6,7 @@ const profileRouter = Router();
 // load profile validation
 import validateProfileInput from "../../validation/profile.js";
 import validateExperienceInput from "../../validation/experience.js";
+import validateEducationInput from "../../validation/experience.js";
 
 // @route  Get /api/profile/test
 // @desc  to test the route
@@ -199,6 +200,49 @@ profileRouter.post(
           return; // Make sure to return to avoid further code execution
         }
         profile.experience.push(experienceFields);
+        profile.save().then(() => {
+          res.json(profile);
+        });
+      })
+      .catch((err) => res.status(404).json(err));
+  }
+);
+
+// @route  POST /api/profile/education
+// @desc POST add  education
+// @access praivate
+profileRouter.post(
+  "/education",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateEducationInput(req.body);
+    //check for error
+    if (!isValid) {
+      //send response
+      res.status(404).json(errors);
+      return;
+    }
+    const educationFields = {};
+
+    if (req.body.school) educationFields.school = req.body.school;
+    if (req.body.degree) educationFields.degree = req.body.degree;
+    if (req.body.fieldofstudy)
+      educationFields.fieldofstudy = req.body.fieldofstudy;
+    if (req.body.from) educationFields.from = req.body.from;
+    if (req.body.to) educationFields.to = req.body.to;
+    if (req.body.current) educationFields.current = req.body.current;
+    if (req.body.description)
+      educationFields.description = req.body.description;
+
+    //finding user
+    profileModel
+      .findOne({ user: req.user.id })
+      .then((profile) => {
+        if (!profile) {
+          res.status(404).json({ noprofile: "no profile found for this user" });
+          return; // Make sure to return to avoid further code execution
+        }
+        profile.education.push(educationFields);
         profile.save().then(() => {
           res.json(profile);
         });
