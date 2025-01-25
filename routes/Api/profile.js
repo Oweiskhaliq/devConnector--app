@@ -6,7 +6,7 @@ const profileRouter = Router();
 // load profile validation
 import validateProfileInput from "../../validation/profile.js";
 import validateExperienceInput from "../../validation/experience.js";
-import validateEducationInput from "../../validation/experience.js";
+import validateEducationInput from "../../validation/education.js";
 
 // @route  Get /api/profile/test
 // @desc  to test the route
@@ -103,7 +103,7 @@ profileRouter.get("/user/:user_id", (req, res) => {
 
 // @route  POST /api/profile
 // @desc POST Create and Edit user profile
-// @access praivate
+// @access private
 profileRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
@@ -169,7 +169,7 @@ profileRouter.post(
 
 // @route  POST /api/profile/experience
 // @desc POST add  experience
-// @access praivate
+// @access private
 profileRouter.post(
   "/experience",
   passport.authenticate("jwt", { session: false }),
@@ -178,7 +178,7 @@ profileRouter.post(
     //check for error
     if (!isValid) {
       //send response
-      res.status(404).json(errors);
+      return res.status(404).json(errors);
     }
     const experienceFields = {};
 
@@ -195,22 +195,26 @@ profileRouter.post(
     profileModel
       .findOne({ user: req.user.id })
       .then((profile) => {
+        errors.noprofile = "no profile found for this user";
         if (!profile) {
-          res.status(404).json({ noprofile: "no profile found for this user" });
+          res.status(404).json(errors);
           return; // Make sure to return to avoid further code execution
         }
         profile.experience.push(experienceFields);
-        profile.save().then(() => {
-          res.json(profile);
-        });
+        profile
+          .save()
+          .then(() => {
+            res.json(profile);
+          })
+          .catch((err) => res.status(404).json(err));
       })
       .catch((err) => res.status(404).json(err));
   }
 );
 
 // @route  POST /api/profile/experience/delete/:exp_id
-// @desc POST add  experience
-// @access praivate
+// @desc POST delete user  experience
+// @access private
 profileRouter.delete(
   "/experience/delete/:exp_id",
   passport.authenticate("jwt", { session: false }),
@@ -239,7 +243,7 @@ profileRouter.delete(
 
 // @route  POST /api/profile/education
 // @desc POST add  education
-// @access praivate
+// @access private
 profileRouter.post(
   "/education",
   passport.authenticate("jwt", { session: false }),
@@ -277,6 +281,35 @@ profileRouter.post(
         });
       })
       .catch((err) => res.status(404).json(err));
+  }
+);
+
+// @route  POST /api/profile/education/delete/:edu_id
+// @desc POST delete user  education
+// @access private
+profileRouter.delete(
+  "/education/delete/:edu_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //finding user
+    profileModel.findOne({ user: req.user.id }).then((profile) => {
+      if (!profile) {
+        res.status(404).json({ noproifle: "No profile found" });
+        return;
+      }
+      // Finding the experience to delete
+      const eduIndex = profile.education.findIndex(
+        (edu) => edu._id.toString() === req.params.edu_id
+      );
+
+      if (eduIndex === -1) {
+        return res.status(400).json({ nodducation: "no experience Found" });
+      }
+      // Removing the experience from the array
+      profile.education.splice(eduIndex, 1);
+      // Saving the profile
+      profile.save().then(() => res.json(profile));
+    });
   }
 );
 

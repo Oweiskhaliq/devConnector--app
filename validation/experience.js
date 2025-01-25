@@ -1,29 +1,25 @@
 import validator from "validator";
 import isEmptyLocal from "./isEmpty.js";
 
-const validateEducationInput = (data) => {
+const validateExperienceInput = (data) => {
   let errors = {};
 
-  data.school = !isEmptyLocal(data.school) ? data.school : "";
-  data.degree = !isEmptyLocal(data.degree) ? data.degree : "";
-  data.fieldofstudy = !isEmptyLocal(data.fieldofstudy) ? data.fieldofstudy : "";
+  data.title = !isEmptyLocal(data.title) ? data.title : "";
+  data.company = !isEmptyLocal(data.company) ? data.company : "";
   data.from = !isEmptyLocal(data.from) ? data.from : "";
 
-  if (!validator.isLength(data.school, { min: 2, max: 40 })) {
-    errors.school = "school name will be between 2 to 40 characters";
+  if (!validator.isLength(data.title, { min: 2, max: 40 })) {
+    errors.title = "title will be between 2 to 40 characters";
   }
-  if (validator.isEmpty(data.school)) {
-    errors.school = "school field is required.";
+  if (validator.isEmpty(data.title)) {
+    errors.title = "title field is required.";
   }
 
-  if (validator.isEmpty(data.degree)) {
-    errors.degree = "degree filed is required";
-  }
-  if (validator.isEmpty(data.fieldofstudy)) {
-    errors.fieldofstudy = "fieldofstudy filed is required";
+  if (validator.isEmpty(data.company)) {
+    errors.company = "company filed is required";
   }
   if (validator.isEmpty(data.from)) {
-    errors.from = "from Date  is required";
+    errors.from = "from filed is required";
   }
 
   return {
@@ -32,4 +28,4 @@ const validateEducationInput = (data) => {
   };
 };
 
-export default validateEducationInput;
+export default validateExperienceInput;
